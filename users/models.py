@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from online_education.models import Lesson, Course
 
 
 # Create your models here.
@@ -43,3 +44,30 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = 'Пользователи'
+
+
+class Payment(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        null=True,
+        blank=True,
+        related_name='payments'
+    )
+    date = models.DateTimeField(
+        verbose_name='Дата оплаты'
+    )
+    paid_course = models.ForeignKey(
+        Course,
+        verbose_name='Оплаченный курс',
+        on_delete=models.CASCADE,
+        related_name='paid_courses',
+    )
+    amount = models.PositiveIntegerField(
+        verbose_name='Сумма оплаты'
+    )
+    payment_method = models.CharField(
+        max_length=50,
+        verbose_name='Способ оплаты'
+    )
