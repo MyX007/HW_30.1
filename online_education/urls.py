@@ -10,7 +10,7 @@ from online_education.views import (CourseViewSet, LessonListAPIView, LessonCrea
 app_name = OnlineEducationConfig.name
 
 router = DefaultRouter()
-router.register('course',
+router.register(r'course',
                 CourseViewSet,
                 basename='course'
                 )
