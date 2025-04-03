@@ -63,7 +63,18 @@ class Payment(models.Model):
         verbose_name='Оплаченный курс',
         on_delete=models.CASCADE,
         related_name='paid_courses',
+        null=True,
+        blank=True
     )
+    paid_lesson = models.ForeignKey(
+        Lesson,
+        verbose_name='Оплаченный урок',
+        on_delete=models.CASCADE,
+        related_name='paid_lessons',
+        null=True,
+        blank=True,
+    )
+
     amount = models.PositiveIntegerField(
         verbose_name='Сумма оплаты'
     )
