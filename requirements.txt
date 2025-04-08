@@ -10,3 +10,4 @@ isort
 djangorestframework
 django-filter
 djangorestframework-simplejwt
+coverage
