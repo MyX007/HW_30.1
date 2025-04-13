@@ -10,6 +10,7 @@ from users.models import User
 
 
 class LessonTestCase(APITestCase):
+    """Тесты урока."""
     def setUp(self):
         self.user = User.objects.create(email='test@test.com')
         self.client.force_authenticate(user=self.user)
@@ -18,6 +19,7 @@ class LessonTestCase(APITestCase):
                                             owner=self.user)
 
     def test_create_lesson(self):
+        """Проверка создания урока."""
         data = {
             'title': self.lesson.title,
             'description': self.lesson.description,
@@ -34,6 +36,7 @@ class LessonTestCase(APITestCase):
         self.assertTrue(Lesson.objects.filter(title=self.lesson.title).exists())
 
     def test_update_lesson(self):
+        """Проверка обновления урока."""
         data = {
             'title': 'Test 2',
             'description': 'Test 2',
@@ -50,13 +53,14 @@ class LessonTestCase(APITestCase):
         self.assertTrue(Lesson.objects.filter(title=data['title']).exists())
 
     def test_delete_lesson(self):
-
+        """Проверка удаления урока."""
         response = self.client.delete(f'/lesson/delete/{self.lesson.id}/')
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Lesson.objects.filter(title=self.lesson.title).exists())
 
     def test_get_lesson(self):
+        """Проверка получения урока."""
         response = self.client.get(f'/lesson/{self.lesson.id}/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -67,12 +71,14 @@ class LessonTestCase(APITestCase):
 
 
 class SubscriptionTestCase(APITestCase):
+    """Тесты подписок."""
     def setUp(self):
         self.user = User.objects.create(email='test@test.com')
         self.client.force_authenticate(user=self.user)
         self.course = Course.objects.create(title='test', description='test')
 
     def test_create_subscription(self):
+        """Проверка создания подписки."""
         url = reverse("online_education:subscription-check")
         data = {"course_id": self.course.pk}
         response = self.client.post(url, data)
@@ -80,6 +86,7 @@ class SubscriptionTestCase(APITestCase):
         self.assertEqual(response.data["message"], "Подписка подключена")
 
     def test_delete_subscription(self):
+        """Проверка удаления подписки."""
         Subscription.objects.create(course=self.course, user=self.user)
 
         url = reverse("online_education:subscription-check")

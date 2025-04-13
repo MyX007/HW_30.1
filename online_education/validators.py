@@ -3,6 +3,7 @@ from rest_framework.serializers import ValidationError
 
 
 class LinkValidator:
+    """Валидатор проверки ссылок на видеоматериал."""
     def __init__(self, link):
         self.link = link
 

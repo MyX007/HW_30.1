@@ -6,15 +6,18 @@ from rest_framework.response import Response
 from online_education.models import Course, Lesson, Subscription
 from online_education.paginators import CourseAndLessonPaginator
 from online_education.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
+from online_education.services import create_price
 from users.permissions import IsModer, IsOwner
 
 
 class CourseViewSet(viewsets.ModelViewSet):
+    """Вьюсет курсов."""
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     pagination_class = CourseAndLessonPaginator
 
     def get_permissions(self):
+        """Получение разрешений."""
         if self.action == "create":
             self.permission_classes = (~IsModer,)
 
@@ -27,41 +30,55 @@ class CourseViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        """Назначение владелца."""
+        serializer.save(owner=self.request.user, price_id=create_price(
+            title=self.request.data["title"],
+            description=self.request.data["description"],
+            amount=self.request.data["amount"],
+        )
+                        )
+
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
+    """Создание урока."""
     permission_classes = (~IsModer,)
     serializer_class = LessonSerializer
 
     def perform_create(self, serializer):
+        """Назначение владельца."""
         serializer.save(owner=self.request.user)
 
 
 class LessonListAPIView(generics.ListAPIView):
+    """Просмотр всех уроков."""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     pagination_class = CourseAndLessonPaginator
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
+    """Просмотр одного урока."""
     permission_classes = [IsModer | IsOwner]
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
+    """Обновление урока."""
     permission_classes = [IsModer | IsOwner]
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
+    """Удаление урока."""
     permission_classes = [~IsModer | IsOwner]
     queryset = Lesson.objects.all()
 
 
 class SubscriptionUpdateAPIView(generics.UpdateAPIView):
+    """Обновление статуса подписки на курс"""
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
 
