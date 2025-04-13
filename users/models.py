@@ -7,6 +7,7 @@ from online_education.models import Course, Lesson
 
 
 class User(AbstractUser):
+    """Модель пользователя."""
     phone = models.CharField(
         max_length=35, verbose_name="Телефон", blank=True, null=True
     )
@@ -32,6 +33,7 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
+    """Модель платежа."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -60,5 +62,12 @@ class Payment(models.Model):
 
     amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
     payment_method = models.CharField(max_length=50, verbose_name="Способ оплаты")
+    payment_url = models.URLField(max_length=4000, verbose_name="Ссылка на оплату", blank=True, null=True)
 
 
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежт"
+
+    def __str__(self):
+        return f"{self.user} - {self.amount} ({self.date})"
