@@ -7,6 +7,7 @@ from online_education.models import Course, Lesson, Subscription
 from online_education.paginators import CourseAndLessonPaginator
 from online_education.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from online_education.services import create_price
+from online_education.tasks import subscribe_update
 from users.permissions import IsModer, IsOwner
 
 
@@ -37,6 +38,19 @@ class CourseViewSet(viewsets.ModelViewSet):
             amount=self.request.data["amount"],
         )
                         )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        course = get_object_or_404(Course, pk=kwargs["pk"])
+
+        subscribe_update(course)
+        return Response(serializer.data)
+
 
 
 
